@@ -34,7 +34,7 @@ export default function Home() {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       // First, check if the file exists
-      const response = await fetch('/MyFile.pdf', { method: 'HEAD' });
+      const response = await fetch('/Vajra_Catalogue.pdf', { method: 'HEAD' });
       
       if (!response.ok) {
         setError(true);
@@ -45,8 +45,8 @@ export default function Home() {
 
       // Create download link with proper MIME type
       const link = document.createElement("a");
-      link.href = "/MyFile.pdf";
-      link.download = "MyFile.pdf";
+      link.href = "/Vajra_Catalogue.pdf";
+      link.download = "Vajra_Catalogue.pdf";
       
       // Set proper attributes for better mobile support
       link.setAttribute('type', 'application/pdf');
@@ -70,10 +70,10 @@ export default function Home() {
   // Alternative method using window.open (better for mobile)
   const handleDownloadAlternative = () => {
     // This opens the PDF in a new tab, allowing users to download from there
-    const newWindow = window.open('/MyFile.pdf', '_blank');
+    const newWindow = window.open('/Vajra_Catalogue.pdf', '_blank');
     if (!newWindow) {
       // Fallback if popup is blocked
-      window.location.href = '/MyFile.pdf';
+      window.location.href = '/Vajra_Catalogue.pdf';
     }
     setDownloaded(true);
     setIsLoading(false);
@@ -148,7 +148,7 @@ export default function Home() {
               </div>
               
               <h2 className="text-white text-2xl font-bold mb-4">Download Complete!</h2>
-              <p className="text-green-200 text-lg mb-6">Thank you for downloading MyFile.pdf</p>
+              <p className="text-green-200 text-lg mb-6">Thank you for downloading Vajra_Catalogue.pdf</p>
               
               <div className="flex items-center justify-center gap-2 text-green-300">
                 <Sparkles className="w-5 h-5 animate-spin" />
@@ -171,7 +171,7 @@ export default function Home() {
               </div>
               
               <h2 className="text-white text-2xl font-bold mb-4">Download Failed</h2>
-              <p className="text-red-200 text-lg mb-6">MyFile.pdf could not be found</p>
+              <p className="text-red-200 text-lg mb-6">Vajra_Catalogue.pdf could not be found</p>
               
               <button
                 onClick={retryDownload}
