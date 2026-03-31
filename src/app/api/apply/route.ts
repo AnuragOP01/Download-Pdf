@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// app/api/apply/route.ts
+
 export async function POST(request: Request) {
   let body: any = {};
 
@@ -16,37 +18,34 @@ export async function POST(request: Request) {
     console.error("Error parsing request body:", e);
   }
 
-  const coupon_code = (body.coupon_code || body.code || "").toUpperCase();
+  // Razorpay sends { order_id, contact, email, code }
+  const code = (body.code || body.coupon_code || "").toUpperCase();
 
   const coupons: Record<string, { value_type: string; value: number }> = {
     WELCOME10: { value_type: "percentage", value: 10 },
-    SAVE500:   { value_type: "flat",       value: 50000 }, // ✅ paise
+    SAVE500:   { value_type: "fixed_amount", value: 50000 }, // paise
   };
 
-  const coupon = coupons[coupon_code];
+  const coupon = coupons[code];
 
   if (!coupon) {
     return Response.json({
       success: false,
-      data: {
-        error_code: "INVALID_COUPON",
-        error_description: "Coupon code is not valid"
+      error: {
+        code: "INVALID_COUPON",
+        description: "Coupon code is not valid"
       }
     });
   }
 
   return Response.json({
-    success: true,
-    data: {
-      promotions: [
-        {
-          code: coupon_code,
-          type: "coupon",
-          value: coupon.value,
-          value_type: coupon.value_type,
-          description: `${coupon_code} Applied!`
-        }
-      ]
+    promotion: {                          // ✅ singular object, not array
+      reference_id: code,                 // ✅ required
+      code: code,
+      type: "coupon",
+      value: coupon.value,
+      value_type: coupon.value_type,      // ✅ "fixed_amount" not "flat"
+      description: `${code} applied successfully!`
     }
   });
 }
