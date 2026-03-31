@@ -15,6 +15,7 @@ export async function POST(request: Request) {
       });
     }
   } catch (e) {
+    console.error("Error parsing request body:", e);
     // ignore parse errors
   }
 

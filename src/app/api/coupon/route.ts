@@ -32,7 +32,10 @@ export async function POST(request: Request) {
     const text = await request.text();
     const params = new URLSearchParams(text);
     cartAmount = Number(params.get("cart_amount") || 0);
-  } catch (e) {}
+  } catch (e) {
+        console.error("Error parsing request body:", e);
+
+  }
 
   const allPromotions = [
     {
