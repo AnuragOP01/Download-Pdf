@@ -1,4 +1,4 @@
-export async function GET(request: Request) {
+export async function GET() {
   // const { searchParams } = new URL(request.url);
   // const order_id = searchParams.get('order_id');
   
