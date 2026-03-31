@@ -1,6 +1,6 @@
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const order_id = searchParams.get('order_id');
+  // const { searchParams } = new URL(request.url);
+  // const order_id = searchParams.get('order_id');
   
   return Response.json({
     promotions: [
