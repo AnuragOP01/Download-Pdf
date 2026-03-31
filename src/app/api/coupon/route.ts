@@ -2,61 +2,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // app/api/coupon/route.ts
 
+const allPromotions = [
+  {
+    code: "WELCOME10",
+    title: "10% OFF First Order",
+    value_type: "percentage",
+    value: 10,
+    min_amount: 20000   // ₹200 in paise
+  },
+  {
+    code: "SAVE500",
+    title: "Flat Rs.500 OFF",
+    value_type: "flat",
+    value: 50000,       // ₹500 in paise
+    min_amount: 200000  // ₹2000 in paise
+  }
+];
+
 export async function GET() {
   return Response.json({
     success: true,
     data: {
-      promotions: [
-        {
-          code: "WELCOME10",
-          title: "10% OFF First Order",
-          discount_type: "percentage",
-          discount_value: 10,
-          min_amount: 200
-        },
-        {
-          code: "SAVE500",
-          title: "Flat Rs.500 OFF",
-          discount_type: "flat",
-          discount_value: 500,
-          min_amount: 2000
-        }
-      ]
+      promotions: allPromotions
     }
   });
 }
 
-// Razorpay may POST to this URL too (to fetch coupons with cart context)
 export async function POST(request: Request) {
-  // Optionally read cart amount to return only eligible coupons
   let cartAmount = 0;
   try {
     const text = await request.text();
     const params = new URLSearchParams(text);
     cartAmount = Number(params.get("cart_amount") || 0);
   } catch (e) {
-        console.error("Error parsing request body:", e);
-
+    console.error("Error parsing request body:", e);
   }
 
-  const allPromotions = [
-    {
-      code: "WELCOME10",
-      title: "10% OFF First Order",
-      discount_type: "percentage",
-      discount_value: 10,
-      min_amount: 200
-    },
-    {
-      code: "SAVE500",
-      title: "Flat Rs.500 OFF",
-      discount_type: "flat",
-      discount_value: 500,
-      min_amount: 2000
-    }
-  ];
-
-  // Filter to only show coupons the cart is eligible for
   const eligible = cartAmount > 0
     ? allPromotions.filter(p => cartAmount >= p.min_amount)
     : allPromotions;
