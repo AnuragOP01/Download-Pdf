@@ -18,12 +18,12 @@ export async function POST(request: Request) {
     console.error("Error parsing request body:", e);
   }
 
-  // Razorpay sends { order_id, contact, email, code }
   const code = (body.code || body.coupon_code || "").toUpperCase();
+  const orderAmount = Number(body.amount || 0); // in paise, sent by Razorpay
 
-  const coupons: Record<string, { value_type: string; value: number }> = {
-    WELCOME10: { value_type: "percentage", value: 10 },
-    SAVE500:   { value_type: "fixed_amount", value: 50000 }, // paise
+  const coupons: Record<string, { type: "percentage" | "fixed_amount"; value: number }> = {
+    WELCOME10: { type: "percentage", value: 10 },   // 10%
+    SAVE500:   { type: "fixed_amount", value: 50000 }, // ₹500 in paise
   };
 
   const coupon = coupons[code];
@@ -38,13 +38,18 @@ export async function POST(request: Request) {
     });
   }
 
+  // Calculate final discount value always in paise
+  const discountValue = coupon.type === "percentage"
+    ? Math.floor(orderAmount * (coupon.value / 100))
+    : coupon.value;
+
   return Response.json({
-    promotion: {                          // ✅ singular object, not array
-      reference_id: code,                 // ✅ required
+    promotion: {
+      reference_id: code,
       code: code,
       type: "coupon",
-      value: coupon.value,
-      value_type: coupon.value_type,      // ✅ "fixed_amount" not "flat"
+      value: discountValue,       // ✅ always paise, calculated
+      value_type: "fixed_amount", // ✅ always fixed_amount since we pre-calculate
       description: `${code} applied successfully!`
     }
   });
